@@ -9,10 +9,14 @@ import yaml
 
 from app.db import Article, SessionLocal
 
+# Path to RSS configuration
 SOURCES_PATH = Path("data/sources.yaml")
 
 
 def _parse_datetime(entry: dict[str, Any]) -> datetime | None:
+    """
+    Extract publication datetime from an RSS entry if available.
+    """
     for key in ("published_parsed", "updated_parsed"):
         t = entry.get(key)
         if t:
@@ -30,6 +34,7 @@ def ingest_rss() -> tuple[int, int]:
 
     added = 0
     seen = 0
+    seen_in_run: set[str] = set()
 
     with SessionLocal() as session:
         for src in rss_sources:
@@ -54,6 +59,12 @@ def ingest_rss() -> tuple[int, int]:
                 if not link:
                     continue
 
+                # Skip duplicates within the same run
+                if link in seen_in_run:
+                    seen += 1
+                    continue
+
+                # Skip duplicates already in DB
                 exists = session.query(Article.id).filter(Article.url == link).first()
                 if exists:
                     seen += 1
@@ -68,6 +79,7 @@ def ingest_rss() -> tuple[int, int]:
                         published_at=published_at,
                     )
                 )
+                seen_in_run.add(link)
                 added += 1
 
         session.commit()

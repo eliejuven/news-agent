@@ -9,6 +9,15 @@ rss_sources:
   - name: MIT Technology Review
     country: US
     url: https://www.technologyreview.com/feed/
+  - name: "New York Times - Technology"
+    country: "US"
+    url: "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml"
+  - name: "New York Times - Business"
+    country: "US"
+    url: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml"
+  - name: "Wall Street Journal - Tech"
+    country: "US"
+    url: "https://feeds.a.dj.com/rss/RSSWSJD.xml"
 
   # --- UK ---
   - name: BBC News - Technology
@@ -17,10 +26,22 @@ rss_sources:
   - name: Financial Times - Technology
     country: UK
     url: https://www.ft.com/technology?format=rss
+  - name: "The Economist - Technology"
+    country: "UK"
+    url: "https://www.economist.com/technology/rss.xml"
+  - name: "The Economist - Business"
+    country: "UK"
+    url: "https://www.economist.com/business/rss.xml"
 
   # --- FR ---
   - name: Le Monde - Pixels
     country: FR
     url: https://www.lemonde.fr/pixels/rss_full.xml
+  - name: "Le Figaro - Technologies"
+    country: "FR"
+    url: "https://www.lefigaro.fr/rss/figaro_technologies.xml"
+  - name: "Le Point - High Tech"
+    country: "FR"
+    url: "https://www.lepoint.fr/rss/high-tech.xml"
 
 newsletter_sources: []

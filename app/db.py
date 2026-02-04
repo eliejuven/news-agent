@@ -2,7 +2,7 @@ from typing import Optional
 from datetime import datetime
 from sqlalchemy import create_engine, String, DateTime, Integer, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
-
+from sqlalchemy import Float
 from app.config import settings
 
 
@@ -35,6 +35,28 @@ class Article(Base):
     cluster_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 
     # later: embedding, cluster_id, score, summary fields
+
+class ArticleAnalysis(Base):
+    __tablename__ = "article_analysis"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+    # what we're analyzing
+    article_id: Mapped[int] = mapped_column(Integer, index=True, unique=True)
+    cluster_id: Mapped[int] = mapped_column(Integer, index=True)
+
+    # embedding filter metadata
+    embed_model: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    profile_similarity: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+
+    # LLM judge metadata
+    judge_model: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    judge_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    judge_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
 
 class SentCluster(Base):
     __tablename__ = "sent_clusters"

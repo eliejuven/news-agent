@@ -8,13 +8,15 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///news_agent.db"
 
     # Placeholder for later (email)
-    EMAIL_TO: str = ""
+    EMAIL_TO: str = "" # comma separated list of emails
     EMAIL_FROM: str = ""
 
     SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 587
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""
+    
+    OPENAI_API_KEY: str = ""
 
 
 settings = Settings()

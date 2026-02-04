@@ -48,9 +48,11 @@ def send_email(subject: str, html: str) -> None:
     if not settings.SMTP_USER or not settings.SMTP_PASSWORD:
         raise ValueError("SMTP_USER / SMTP_PASSWORD missing in .env")
 
+    recipients = [e.strip() for e in settings.EMAIL_TO.split(",") if e.strip()]
+
     msg = MIMEMultipart("alternative")
     msg["From"] = settings.EMAIL_FROM
-    msg["To"] = settings.EMAIL_TO
+    msg["To"] = ", ".join(recipients)
     msg["Subject"] = subject
     msg.attach(MIMEText(html, "html"))
 
@@ -59,4 +61,4 @@ def send_email(subject: str, html: str) -> None:
         server.starttls()
         server.ehlo()
         server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-        server.sendmail(settings.EMAIL_FROM, [settings.EMAIL_TO], msg.as_string())
+        server.sendmail(settings.EMAIL_FROM, recipients, msg.as_string())
