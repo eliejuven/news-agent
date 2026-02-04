@@ -1,2 +1,26 @@
-rss_sources: []
+rss_sources:
+  # --- US ---
+  - name: TechCrunch
+    country: US
+    url: https://techcrunch.com/feed/
+  - name: The Verge
+    country: US
+    url: https://www.theverge.com/rss/index.xml
+  - name: MIT Technology Review
+    country: US
+    url: https://www.technologyreview.com/feed/
+
+  # --- UK ---
+  - name: BBC News - Technology
+    country: UK
+    url: https://feeds.bbci.co.uk/news/technology/rss.xml
+  - name: Financial Times - Technology
+    country: UK
+    url: https://www.ft.com/technology?format=rss
+
+  # --- FR ---
+  - name: Le Monde - Pixels
+    country: FR
+    url: https://www.lemonde.fr/pixels/rss_full.xml
+
 newsletter_sources: []
