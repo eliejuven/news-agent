@@ -3,6 +3,8 @@ from app.ingest_rss import ingest_rss
 from app.extract import fetch_and_extract
 from app.dedupe import assign_clusters
 from app.rank import select_top10, record_sent
+from datetime import date
+from app.emailer import render_html, send_email
 
 def run_pipeline() -> None:
     init_db()
@@ -24,7 +26,11 @@ def run_pipeline() -> None:
         print(f"    {item.title}")
         print(f"    {item.url}\n")
 
+    html = render_html(top10)
+    send_email(subject=f"Top 10 must-reads — {date.today().isoformat()}", html=html)
+    print("📧 Email sent.")
+
     record_sent([x.cluster_id for x in top10])
     print("✅ Recorded Top 10 as sent (won't repeat next run).")
-    
+
     print("✅ Pipeline finished.")

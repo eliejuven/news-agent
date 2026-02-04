@@ -11,5 +11,10 @@ class Settings(BaseSettings):
     EMAIL_TO: str = ""
     EMAIL_FROM: str = ""
 
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+
 
 settings = Settings()
