@@ -24,8 +24,26 @@ class Article(Base):
     raw_html: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
+    fetch_status: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)   # ok / failed
+    fetch_error: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    fetched_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+
+    extract_status: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)  # ok / failed
+    extract_error: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    xtracted_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+
+    cluster_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+
     # later: embedding, cluster_id, score, summary fields
 
+class SentCluster(Base):
+    __tablename__ = "sent_clusters"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    cluster_id: Mapped[int] = mapped_column(Integer, index=True)
+    sent_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    
 
 engine = create_engine(settings.DATABASE_URL, future=True)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
