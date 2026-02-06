@@ -8,6 +8,7 @@ import yaml
 from app.db import Article, SessionLocal, SentCluster
 from app.embeddings import cosine_similarity, embed_texts
 
+from datetime import datetime, timedelta
 
 PROFILE_PATH = "data/profile.yaml"
 
@@ -17,7 +18,7 @@ class Candidate:
     cluster_id: int
     similarity: float
     country: str
-    
+
     source: str
     title: str
     url: str
@@ -39,8 +40,14 @@ def select_cluster_reps(limit_articles: int = 600) -> Dict[int, Article]:
     """
     with SessionLocal() as session:
         sent = {cid for (cid,) in session.query(SentCluster.cluster_id).all()}
+        cutoff = datetime.utcnow() - timedelta(days=7)
+
         arts: List[Article] = (
             session.query(Article)
+            .filter(
+                ((Article.published_at.is_not(None)) & (Article.published_at >= cutoff))
+                | ((Article.published_at.is_(None)) & (Article.discovered_at >= cutoff))
+            )
             .order_by(Article.discovered_at.desc())
             .limit(limit_articles)
             .all()

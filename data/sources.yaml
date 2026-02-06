@@ -18,6 +18,21 @@ rss_sources:
   - name: "Wall Street Journal - Tech"
     country: "US"
     url: "https://feeds.a.dj.com/rss/RSSWSJD.xml"
+  - name: Bloomberg - Technology
+    country: US
+    url: https://www.bloomberg.com/feeds/technology.xml
+  - name: Ars Technica
+    country: US
+    url: https://feeds.arstechnica.com/arstechnica/index/
+  - name: IEEE Spectrum
+    country: US
+    url: https://spectrum.ieee.org/rss/fulltext
+  - name: VentureBeat
+    country: US
+    url: https://venturebeat.com/feed/
+  - name: Crunchbase News
+    country: US
+    url: https://news.crunchbase.com/feed/
 
   # --- UK ---
   - name: BBC News - Technology

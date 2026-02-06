@@ -1,13 +1,14 @@
-from app.db import init_db
-from app.ingest_rss import ingest_rss
-from app.extract import fetch_and_extract
-from app.dedupe import assign_clusters
-from app.rank import select_top10, record_sent
 from datetime import date
-from app.emailer import render_html, send_email
+
 from app.analyze_candidates import analyze_top_candidates
-from app.rank_llm import select_top10_llm
 from app.brief import generate_big_news_brief
+from app.db import init_db
+from app.dedupe import assign_clusters
+from app.emailer import render_html, send_email
+from app.extract import fetch_and_extract
+from app.ingest_rss import ingest_rss
+from app.rank import record_sent
+from app.rank_llm import select_digest_items
 
 def run_pipeline() -> None:
     init_db()
@@ -22,7 +23,7 @@ def run_pipeline() -> None:
     clustered, clusters = assign_clusters(limit=200, threshold=92)
     print(f"🧩 Dedupe: clustered {clustered} articles into {clusters} clusters")
 
-    new_j = analyze_top_candidates(top_k=60, max_new_judgements=30)
+    new_j = analyze_top_candidates(top_k=120, max_new_judgements=30)
     print(f"🧠 LLM judge: created {new_j} new judgements")
 
 #    top10 = select_top10()
@@ -32,7 +33,8 @@ def run_pipeline() -> None:
 #       print(f"    {item.title}")
 #       print(f"    {item.url}\n")
 
-    top10 = select_top10_llm(top_k=60)
+    from app.rank_llm import select_digest_items
+    top10 = select_digest_items(min_items=6, max_items=10)
     print("\n📬 TOP 10 (LLM-ranked, mostly English)\n")
     for i, item in enumerate(top10, 1):
         print(f"{i:02d}. [{item.country}] ({item.source}) score={item.score:.2f} sim={item.similarity:.3f}")
