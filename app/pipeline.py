@@ -7,6 +7,7 @@ from datetime import date
 from app.emailer import render_html, send_email
 from app.analyze_candidates import analyze_top_candidates
 from app.rank_llm import select_top10_llm
+from app.brief import generate_big_news_brief
 
 def run_pipeline() -> None:
     init_db()
@@ -38,7 +39,8 @@ def run_pipeline() -> None:
         print(f"    {item.title}")
         print(f"    {item.url}\n")
 
-    html = render_html(top10)
+    brief = generate_big_news_brief([x.cluster_id for x in top10])
+    html = render_html(top10, brief=brief)
     send_email(subject=f"Top 10 must-reads — {date.today().isoformat()}", html=html)
     print("📧 Email sent.")
 

@@ -17,6 +17,7 @@ class Candidate:
     cluster_id: int
     similarity: float
     country: str
+    
     source: str
     title: str
     url: str

@@ -4,13 +4,63 @@ import smtplib
 from datetime import date
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import List
 
 from app.config import settings
-from app.rank import RankedItem
+from typing import List, Optional, Any
+
+def _extract_what_to_remember(brief: str) -> str:
+    """
+    Extracts only the WHAT TO REMEMBER section from the brief text.
+    """
+    lines = brief.splitlines()
+    out = []
+    keep = False
+
+    for ln in lines:
+        if ln.strip().upper() == "WHAT TO REMEMBER":
+            keep = True
+            out.append("WHAT TO REMEMBER")
+            continue
+        if keep:
+            # Stop if another section starts (future-proof)
+            if ln.strip().isupper() and not ln.strip().startswith("-"):
+                break
+            out.append(ln)
+
+    return "\n".join(out).strip()
 
 
-def render_html(top10: List[RankedItem]) -> str:
+def _brief_to_html(brief: str) -> str:
+    lines = [ln.strip() for ln in brief.splitlines() if ln.strip()]
+    html_parts = []
+    in_ul = False
+
+    def close_ul():
+        nonlocal in_ul
+        if in_ul:
+            html_parts.append("</ul>")
+            in_ul = False
+
+    for ln in lines:
+        if ln.upper() == "WHAT TO REMEMBER":
+          close_ul()
+          html_parts.append("<h3 style='margin:14px 0 6px 0;'>What to remember</h3>")
+          continue
+
+        if ln.startswith("- "):
+            if not in_ul:
+                html_parts.append("<ul style='margin:6px 0 12px 18px; padding:0;'>")
+                in_ul = True
+            item = ln[2:].strip()
+            html_parts.append(f"<li style='margin:6px 0; color:#222;'>{item}</li>")
+        else:
+            close_ul()
+            html_parts.append(f"<div style='margin:6px 0; color:#444;'>{ln}</div>")
+
+    close_ul()
+    return "\n".join(html_parts)
+
+def render_html(top10: List[Any], brief: Optional[str] = None) -> str:
     items = []
     for i, it in enumerate(top10, 1):
         items.append(
@@ -35,6 +85,8 @@ def render_html(top10: List[RankedItem]) -> str:
         <h2 style="margin-bottom: 6px;">Top 10 must-reads — {date.today().isoformat()}</h2>
         <div style="color:#666; margin-bottom: 16px;">
           Mostly English digest (US=5, UK=4, FR=1)
+                  {_brief_to_html(_extract_what_to_remember(brief)) if brief else ""}
+        <hr style="border:none;border-top:1px solid #eee;margin:16px 0;" />
         </div>
         {''.join(items)}
       </body>
